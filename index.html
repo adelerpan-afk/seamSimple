@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vanilla JS Seamless SVG Pattern Generator v1.7.0</title>
+  <title>Vanilla JS Seamless SVG Pattern Generator v2.0.0</title>
 
   <style>
     :root {
@@ -35,7 +35,7 @@
 
     .app {
       display: grid;
-      grid-template-columns: 360px 1fr 280px;
+      grid-template-columns: 380px 1fr 280px;
       height: 100vh;
     }
 
@@ -98,6 +98,23 @@
       font-size: 13px;
       margin-bottom: 12px;
       color: #f8fafc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title .btn-sm {
+      font-size: 10px;
+      padding: 4px 10px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .section-title .btn-sm:hover {
+      background: #374151;
     }
 
     label {
@@ -278,6 +295,115 @@
       color: var(--muted);
       line-height: 1.45;
       margin-top: 10px;
+    }
+
+    /* ===== PRESET COLORS ===== */
+    .preset-colors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .preset-color {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-color:hover {
+      transform: scale(1.15);
+      border-color: var(--text);
+    }
+
+    .preset-color.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    /* ===== TEMPLATE LIBRARY ===== */
+    .template-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .template-item:hover {
+      background: rgba(31, 41, 55, 0.8);
+      border-color: var(--border);
+    }
+
+    .template-item .preview {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      background: white;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .template-item .preview svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .template-item .info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .template-item .info .name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .template-item .info .date {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .template-item .actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .template-item .actions button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .template-item .actions button:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .template-item .actions button.delete:hover {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
     }
 
     /* ===== MAIN ===== */
@@ -549,6 +675,41 @@
       background: rgba(255, 255, 255, 0.05);
     }
 
+    /* ===== PROGRESS BAR ===== */
+    .progress-container {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .progress-container.active {
+      display: block;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--panel-2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2px;
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1200px) {
       .app {
@@ -611,7 +772,7 @@
     <aside>
       <h1>
         Seamless SVG Pattern
-        <span class="app-version">v1.7.0</span>
+        <span class="app-version">v2.0.0</span>
       </h1>
       <p class="subtitle">
         Generator pattern seamless berbasis Vanilla JS. Preview fit to screen, export 4K.
@@ -751,6 +912,54 @@
           <input id="bgText" type="text" value="#ffffff" />
         </div>
 
+        <!-- ===== COLOR OVERRIDE ===== -->
+        <div style="margin-top:12px; border-top:1px solid var(--border); padding-top:12px;">
+          <div class="section-title" style="font-size:12px; margin-bottom:8px;">🎨 Color Override (SVG)</div>
+          
+          <div class="toggle-row">
+            <span>Override warna SVG</span>
+            <input id="enableColorOverride" type="checkbox" />
+          </div>
+
+          <div class="row" style="margin-top:8px;">
+            <div>
+              <label for="overrideFillColor">Fill Color</label>
+              <div class="color-row">
+                <input id="overrideFillColor" type="color" value="#38bdf8" />
+                <input id="overrideFillText" type="text" value="#38bdf8" style="flex:1;" />
+              </div>
+            </div>
+            <div>
+              <label for="overrideStrokeColor">Stroke Color</label>
+              <div class="color-row">
+                <input id="overrideStrokeColor" type="color" value="#0f172a" />
+                <input id="overrideStrokeText" type="text" value="#0f172a" style="flex:1;" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="overrideStrokeWidth">Stroke Width</label>
+              <input id="overrideStrokeWidth" type="number" min="0" max="20" value="2" />
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <button id="resetColorOverrideBtn" class="btn" style="padding:8px;">Reset</button>
+            </div>
+          </div>
+
+          <!-- ===== PRESET COLORS ===== -->
+          <label style="margin-top:8px;">Preset Warna Fill</label>
+          <div class="preset-colors" id="presetColors">
+            <!-- Akan diisi JavaScript -->
+          </div>
+
+          <p class="hint" style="margin-top:6px; font-size:11px;">
+            Override akan mengganti warna <strong>fill</strong> dan <strong>stroke</strong> dari semua elemen SVG.
+          </p>
+        </div>
+
         <div class="toggle-row">
           <span>Tampilkan batas tile</span>
           <input id="showBoundary" type="checkbox" checked />
@@ -779,14 +988,44 @@
 
         <div class="btn-row">
           <button id="exportSvgBtn" class="btn success">Export Single</button>
-          <button id="exportBatchBtn" class="btn warning">Export Batch (ZIP)</button>
+          <button id="exportBatchBtn" class="btn warning">Batch Download</button>
         </div>
 
         <div class="export-info" id="exportInfo">
           <strong>Export 4K</strong> · Ukuran mengikuti rasio yang dipilih
         </div>
 
+        <!-- ===== PROGRESS BAR ===== -->
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-bar">
+            <div class="fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text">
+            <span id="progressLabel">Memproses...</span>
+            <span id="progressCount">0 / 0</span>
+          </div>
+        </div>
+
         <button id="resetBtn" class="btn danger" style="margin-top:10px;">Reset</button>
+      </div>
+
+      <!-- SECTION 5: TEMPLATE LIBRARY -->
+      <div class="section">
+        <div class="section-title">
+          <span>📦 Template Library</span>
+          <button id="saveTemplateBtn" class="btn-sm">💾 Simpan</button>
+        </div>
+
+        <div id="templateList">
+          <div class="empty-state-svg" style="padding:15px 10px;">
+            <span class="icon" style="font-size:20px;">📭</span>
+            Belum ada template tersimpan
+          </div>
+        </div>
+
+        <p class="hint" style="font-size:10px; margin-top:6px;">
+          Template menyimpan semua setting (SVG, grid, warna, dll)
+        </p>
       </div>
     </aside>
 
@@ -800,7 +1039,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:10px;">
           <button class="toggle-sidebar-btn" id="toggleSidebarBtn" title="Toggle SVG List">📋</button>
-          <div class="badge">Vanilla JS + SVG · v1.7.0</div>
+          <div class="badge">Vanilla JS + SVG · v2.0.0</div>
         </div>
       </div>
 
@@ -840,8 +1079,6 @@
       </div>
     </div>
   </div>
-<!-- Ganti script fflate dengan zip.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/zip.js/2.7.52/zip.min.js"></script>
 
   <script>
     // ================================================================
@@ -863,7 +1100,13 @@
         DEFAULT_COLS: 4,
         DEFAULT_ROWS: 3,
         DEFAULT_SEED: 12345,
-        BASE_SIZE: 3840
+        BASE_SIZE: 3840,
+        PRESET_COLORS: [
+          '#38bdf8', '#22c55e', '#facc15', '#ef4444', '#8b5cf6',
+          '#f472b6', '#fb923c', '#a3e635', '#2dd4bf', '#f87171',
+          '#60a5fa', '#a78bfa', '#fbbf24', '#34d399', '#f472b6',
+          '#ffffff', '#0f172a', '#64748b', '#000000'
+        ]
       };
 
       // ============================================================
@@ -875,7 +1118,8 @@
         currentAspect: '1x1',
         tileRatioLocked: false,
         clipCounter: 0,
-        renderTimeout: null
+        renderTimeout: null,
+        templates: []
       };
 
       // ============================================================
@@ -919,6 +1163,16 @@
         DOM.showBoundary = document.getElementById('showBoundary');
         DOM.wrapClone = document.getElementById('wrapClone');
 
+        // Color Override
+        DOM.enableColorOverride = document.getElementById('enableColorOverride');
+        DOM.overrideFillColor = document.getElementById('overrideFillColor');
+        DOM.overrideFillText = document.getElementById('overrideFillText');
+        DOM.overrideStrokeColor = document.getElementById('overrideStrokeColor');
+        DOM.overrideStrokeText = document.getElementById('overrideStrokeText');
+        DOM.overrideStrokeWidth = document.getElementById('overrideStrokeWidth');
+        DOM.resetColorOverrideBtn = document.getElementById('resetColorOverrideBtn');
+        DOM.presetColors = document.getElementById('presetColors');
+
         DOM.exportSvgBtn = document.getElementById('exportSvgBtn');
         DOM.exportBatchBtn = document.getElementById('exportBatchBtn');
         DOM.exportFormat = document.getElementById('exportFormat');
@@ -943,6 +1197,16 @@
         DOM.deselectAllBtn = document.getElementById('deselectAllBtn');
         DOM.clearAllBtn = document.getElementById('clearAllBtn');
         DOM.toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+
+        // Progress
+        DOM.progressContainer = document.getElementById('progressContainer');
+        DOM.progressFill = document.getElementById('progressFill');
+        DOM.progressLabel = document.getElementById('progressLabel');
+        DOM.progressCount = document.getElementById('progressCount');
+
+        // Template
+        DOM.templateList = document.getElementById('templateList');
+        DOM.saveTemplateBtn = document.getElementById('saveTemplateBtn');
       }
 
       // ============================================================
@@ -993,9 +1257,9 @@
       }
 
       // ============================================================
-      // 5. SVG PARSER
+      // 5. SVG PARSER (dengan Color Override)
       // ============================================================
-      function parseSvgString(svgText) {
+      function parseSvgString(svgText, overrideSettings = null) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(svgText, 'image/svg+xml');
         const parserError = doc.querySelector('parsererror');
@@ -1019,11 +1283,72 @@
           vb = { x: 0, y: 0, w, h };
         }
 
+        let inner = svg.innerHTML;
+
+        if (overrideSettings && overrideSettings.enabled) {
+          inner = applyColorOverride(inner, overrideSettings);
+        }
+
         return {
           viewBox: vb,
-          inner: svg.innerHTML,
+          inner: inner,
           content: svgText
         };
+      }
+
+      function applyColorOverride(inner, settings) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = inner;
+        const elements = tempDiv.querySelectorAll('*');
+
+        elements.forEach(el => {
+          // Override fill
+          if (settings.fillColor) {
+            const currentFill = el.getAttribute('fill');
+            if (currentFill && 
+                !['none', 'transparent'].includes(currentFill.toLowerCase()) &&
+                !currentFill.startsWith('url(')) {
+              el.setAttribute('fill', settings.fillColor);
+            }
+            if (el.hasAttribute('style')) {
+              const style = el.getAttribute('style');
+              if (style.includes('fill:')) {
+                el.setAttribute('style', style.replace(/fill:[^;]+;?/, `fill:${settings.fillColor};`));
+              }
+            }
+          }
+
+          // Override stroke
+          if (settings.strokeColor) {
+            const currentStroke = el.getAttribute('stroke');
+            if (currentStroke && 
+                !['none', 'transparent'].includes(currentStroke.toLowerCase()) &&
+                !currentStroke.startsWith('url(')) {
+              el.setAttribute('stroke', settings.strokeColor);
+            }
+            if (el.hasAttribute('style')) {
+              const style = el.getAttribute('style');
+              if (style.includes('stroke:')) {
+                el.setAttribute('style', style.replace(/stroke:[^;]+;?/, `stroke:${settings.strokeColor};`));
+              }
+            }
+          }
+
+          if (settings.strokeWidth !== undefined && settings.strokeWidth !== null) {
+            const currentWidth = el.getAttribute('stroke-width');
+            if (currentWidth) {
+              el.setAttribute('stroke-width', settings.strokeWidth);
+            }
+            if (el.hasAttribute('style')) {
+              const style = el.getAttribute('style');
+              if (style.includes('stroke-width:')) {
+                el.setAttribute('style', style.replace(/stroke-width:[^;]+;?/, `stroke-width:${settings.strokeWidth};`));
+              }
+            }
+          }
+        });
+
+        return tempDiv.innerHTML;
       }
 
       // ============================================================
@@ -1031,7 +1356,8 @@
       // ============================================================
       function addSvgToLibrary(svgText, filename = 'untitled.svg') {
         try {
-          const parsed = parseSvgString(svgText);
+          const overrideSettings = getColorOverrideSettings();
+          const parsed = parseSvgString(svgText, overrideSettings);
           const id = ++STATE.svgIdCounter;
 
           const existing = STATE.svgLibrary.find(item => item.content === svgText);
@@ -1104,7 +1430,48 @@
       }
 
       // ============================================================
-      // 7. GET SETTINGS
+      // 7. COLOR OVERRIDE
+      // ============================================================
+      function getColorOverrideSettings() {
+        return {
+          enabled: DOM.enableColorOverride.checked,
+          fillColor: DOM.overrideFillText.value || DOM.overrideFillColor.value,
+          strokeColor: DOM.overrideStrokeText.value || DOM.overrideStrokeColor.value,
+          strokeWidth: Number(DOM.overrideStrokeWidth.value) || 2
+        };
+      }
+
+      function reprocessSvgColors() {
+        const overrideSettings = getColorOverrideSettings();
+        STATE.svgLibrary.forEach(item => {
+          const parsed = parseSvgString(item.content, overrideSettings);
+          item.inner = parsed.inner;
+          item.viewBox = parsed.viewBox;
+        });
+        renderSidebar();
+        renderPattern();
+      }
+
+      function renderPresetColors() {
+        const container = DOM.presetColors;
+        container.innerHTML = '';
+        CONFIG.PRESET_COLORS.forEach(color => {
+          const el = document.createElement('div');
+          el.className = 'preset-color';
+          el.style.background = color;
+          el.title = color;
+          el.addEventListener('click', () => {
+            DOM.overrideFillColor.value = color;
+            DOM.overrideFillText.value = color;
+            DOM.enableColorOverride.checked = true;
+            reprocessSvgColors();
+          });
+          container.appendChild(el);
+        });
+      }
+
+      // ============================================================
+      // 8. GET SETTINGS
       // ============================================================
       function getSettings() {
         const canvas = getCanvasDimensions();
@@ -1140,7 +1507,7 @@
       }
 
       // ============================================================
-      // 8. RENDER PATTERN
+      // 9. RENDER PATTERN
       // ============================================================
       function getTileIndex(x, y, s) {
         return {
@@ -1203,7 +1570,6 @@
         const randomOffset = getRandomOffset(x, y, s);
         const randomRotation = getRandomRotation(x, y, s);
 
-        // Create symbol for each SVG
         svgs.forEach((svg, index) => {
           const symbolId = `svg_${svg.id}_${STATE.clipCounter}`;
           const symbol = createSvgEl('symbol', {
@@ -1219,7 +1585,6 @@
             const cx = x + pos.dx + s.tileW / 2 + s.offsetX + randomOffset.x;
             const cy = y + pos.dy + s.tileH / 2 + s.offsetY + randomOffset.y;
 
-            // Different scale/rotation per SVG layer
             const layerScale = s.scale;
             const layerRotation = s.rotation + randomRotation;
 
@@ -1248,7 +1613,6 @@
       function renderPattern() {
         const s = getSettings();
 
-        // Update display values
         DOM.scaleVal.textContent = Math.round(s.scale * 100) + '%';
         DOM.rotationVal.textContent = s.rotation + '°';
         DOM.randomAmountVal.textContent = s.randomAmount + ' px';
@@ -1270,7 +1634,6 @@
 
         clearSvg(DOM.previewSvg);
 
-        // Background
         const bg = createSvgEl('rect', {
           x: 0,
           y: 0,
@@ -1314,7 +1677,6 @@
             const tileGroup = drawTile(x, y, s, checkedSvgs, defs);
             DOM.previewSvg.appendChild(tileGroup);
 
-            // Edge wrapping
             if ((s.mode === 'brick' || s.mode === 'brick-halfdrop') &&
               row % 2 === 1 && x + s.tileW > s.canvasWidth) {
               const wrapGroup = drawTile(x - s.canvasWidth, y, s, checkedSvgs, defs);
@@ -1395,7 +1757,7 @@
       }
 
       // ============================================================
-      // 9. RENDER SIDEBAR
+      // 10. RENDER SIDEBAR
       // ============================================================
       function renderSidebar() {
         const container = DOM.svgList;
@@ -1461,7 +1823,7 @@
       }
 
       // ============================================================
-      // 10. AUTO CALCULATE TILE
+      // 11. AUTO CALCULATE TILE
       // ============================================================
       function autoCalculateTileSize() {
         const canvas = getCanvasDimensions();
@@ -1486,7 +1848,7 @@
       }
 
       // ============================================================
-      // 11. SET ASPECT RATIO
+      // 12. SET ASPECT RATIO
       // ============================================================
       function setAspectRatio(ratio) {
         STATE.currentAspect = ratio;
@@ -1497,7 +1859,7 @@
       }
 
       // ============================================================
-      // 12. EXPORT FUNCTIONS
+      // 13. EXPORT FUNCTIONS
       // ============================================================
       function exportSingle() {
         renderPattern();
@@ -1549,8 +1911,9 @@
 
         img.src = url;
       }
-// ============================================================
-// 13. EXPORT BATCH WITH ZIP
+
+      // ============================================================
+// 14. BATCH DOWNLOAD (tanpa ZIP, dengan progress bar)
 // ============================================================
 async function exportBatch() {
   const checkedSvgs = getCheckedSvgs();
@@ -1560,11 +1923,16 @@ async function exportBatch() {
   }
 
   const format = DOM.exportFormat.value;
-  const files = [];
+  const total = checkedSvgs.length;
+  let completed = 0;
 
-  DOM.status.textContent = `Memproses ${checkedSvgs.length} SVG...`;
+  // Show progress
+  DOM.progressContainer.classList.add('active');
+  DOM.progressFill.style.width = '0%';
+  DOM.progressLabel.textContent = 'Memulai batch download...';
+  DOM.progressCount.textContent = `0 / ${total}`;
+  DOM.status.textContent = `Memproses ${total} SVG...`;
 
-  // Backup state yang benar
   const originalState = STATE.svgLibrary.map(item => ({
     id: item.id,
     checked: item.checked
@@ -1572,42 +1940,68 @@ async function exportBatch() {
 
   for (let i = 0; i < checkedSvgs.length; i++) {
     const svg = checkedSvgs[i];
-    DOM.status.textContent = `Memproses ${i + 1}/${checkedSvgs.length}: ${svg.name}`;
 
-    // Set hanya SVG ini yang aktif
+    DOM.progressLabel.textContent = `Memproses ${i + 1}/${total}: ${svg.name}`;
+    DOM.progressCount.textContent = `${i + 1} / ${total}`;
+    DOM.progressFill.style.width = `${((i + 1) / total) * 100}%`;
+
     STATE.svgLibrary.forEach(item => {
       item.checked = (item.id === svg.id);
     });
 
     renderPattern();
 
-    // Generate SVG
-    const clone = DOM.previewSvg.cloneNode(true);
-    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    const svgContent = `<?xml version="1.0" encoding="UTF-8"?>\n${clone.outerHTML}`;
-
     if (format === 'svg' || format === 'both') {
-      files.push({
-        name: getFilename(svg.name, 'svg'),
-        content: svgContent,
-        type: 'svg'
-      });
+      const clone = DOM.previewSvg.cloneNode(true);
+      clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      const svgContent = `<?xml version="1.0" encoding="UTF-8"?>\n${clone.outerHTML}`;
+      downloadFile(getFilename(svg.name, 'svg'), svgContent, 'image/svg+xml;charset=utf-8');
+      completed++;
     }
 
     if (format === 'png' || format === 'both') {
-      const pngData = await generatePngData(svgContent);
-      if (pngData) {
-        files.push({
-          name: getFilename(svg.name, 'png'),
-          content: pngData, // ← Uint8Array
-          type: 'png',
-          isBinary: true
-        });
-      }
+      await new Promise((resolve) => {
+        const svgData = new XMLSerializer().serializeToString(DOM.previewSvg);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        const img = new Image();
+        const width = Number(DOM.previewSvg.getAttribute('width'));
+        const height = Number(DOM.previewSvg.getAttribute('height'));
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          canvas.toBlob(blob => {
+            const pngUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = pngUrl;
+            a.download = getFilename(svg.name, 'png');
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(pngUrl);
+            completed++;
+            resolve();
+          }, 'image/png');
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve();
+        };
+
+        img.src = url;
+      });
     }
+
+    DOM.progressFill.style.width = `${(completed / (total * (format === 'both' ? 2 : 1))) * 100}%`;
+    DOM.progressCount.textContent = `${completed} / ${total * (format === 'both' ? 2 : 1)}`;
   }
 
-  // Restore state yang benar
   originalState.forEach(({ id, checked }) => {
     const item = STATE.svgLibrary.find(el => el.id === id);
     if (item) item.checked = checked;
@@ -1615,90 +2009,185 @@ async function exportBatch() {
 
   renderPattern();
 
-  if (files.length === 0) {
-    alert('Tidak ada file yang dihasilkan.');
-    return;
-  }
+  setTimeout(() => {
+    DOM.progressContainer.classList.remove('active');
+    DOM.progressFill.style.width = '0%';
+  }, 3000);
 
-  DOM.status.textContent = `Membuat ZIP dari ${files.length} file...`;
-
-  try {
-    const zipBlob = await createZipStream(files);
-    downloadFile('seamless-patterns-batch.zip', zipBlob, 'application/zip');
-    DOM.status.textContent = `Batch export selesai: ${files.length} file dalam ZIP`;
-  } catch (err) {
-    console.error('ZIP creation error:', err);
-    alert(`Gagal membuat ZIP: ${err.message}`);
-    DOM.status.textContent = 'Error saat batch export';
-  }
+  DOM.status.textContent = `Batch selesai: ${total} file diekspor`;
 }
 
-// ============================================================
-// generatePngData - Perbaikan
-// ============================================================
-function generatePngData(svgContent) {
-  return new Promise((resolve) => {
-    const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
-    const img = new Image();
-
-    const canvas = document.createElement('canvas');
-    const width = Number(DOM.previewSvg.getAttribute('width'));
-    const height = Number(DOM.previewSvg.getAttribute('height'));
-    canvas.width = width;
-    canvas.height = height;
-
-    img.onload = () => {
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      URL.revokeObjectURL(url);
-      canvas.toBlob(blob => {
-        blob.arrayBuffer().then(buffer => {
-          resolve(new Uint8Array(buffer)); // ← PERBAIKAN
-        }).catch(() => resolve(null));
-      }, 'image/png');
-    };
-
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      resolve(null);
-    };
-
-    img.src = url;
-  });
-}
-
-// ================================================================
-// 14. ZIP MODULE (menggunakan zip.js)
-// ================================================================
-
-async function createZipStream(files) {
-  // Inisialisasi ZipWriter terlebih dahulu
-  const zipWriter = new zip.ZipWriter();
-
-  for (const file of files) {
-    let data;
-    if (file.isBinary) {
-      // Pastikan Uint8Array
-      data = file.content instanceof Uint8Array 
-        ? file.content 
-        : new Uint8Array(file.content);
-    } else {
-      data = new TextEncoder().encode(file.content);
-    }
-    
-    // Konversi ke Blob
-    const blob = new Blob([data]);
-    // Tambahkan ke zip
-    await zipWriter.add(file.name, blob);
-  }
-
-  // Tutup zip dan dapatkan Blob
-  const zipBlob = await zipWriter.close();
-  return zipBlob;
-}
       // ============================================================
-      // 15. RESET
+      // 15. TEMPLATE LIBRARY
+      // ============================================================
+      function saveTemplate() {
+        const checkedSvgs = getCheckedSvgs();
+        if (checkedSvgs.length === 0) {
+          alert('Tidak ada SVG yang aktif untuk disimpan sebagai template.');
+          return;
+        }
+
+        const name = prompt('Nama template:', `Template ${STATE.templates.length + 1}`);
+        if (!name) return;
+
+        const template = {
+          id: Date.now(),
+          name: name,
+          date: new Date().toLocaleDateString(),
+          svgLibrary: STATE.svgLibrary.map(item => ({
+            id: item.id,
+            name: item.name,
+            content: item.content,
+            checked: item.checked,
+            filename: item.filename
+          })),
+          settings: {
+            aspect: STATE.currentAspect,
+            cols: DOM.cols.value,
+            rows: DOM.rows.value,
+            tileW: DOM.tileW.value,
+            tileH: DOM.tileH.value,
+            repeatMode: DOM.repeatMode.value,
+            scale: DOM.scale.value,
+            rotation: DOM.rotation.value,
+            offsetX: DOM.offsetX.value,
+            offsetY: DOM.offsetY.value,
+            randomPosition: DOM.randomPosition.checked,
+            randomAmount: DOM.randomAmount.value,
+            randomRotate: DOM.randomRotate.checked,
+            randomRotateAmount: DOM.randomRotateAmount.value,
+            randomSeed: DOM.randomSeed.value,
+            bgColor: DOM.bgText.value,
+            showBoundary: DOM.showBoundary.checked,
+            wrapClone: DOM.wrapClone.checked,
+            colorOverride: {
+              enabled: DOM.enableColorOverride.checked,
+              fillColor: DOM.overrideFillText.value,
+              strokeColor: DOM.overrideStrokeText.value,
+              strokeWidth: DOM.overrideStrokeWidth.value
+            }
+          }
+        };
+
+        STATE.templates.push(template);
+        renderTemplates();
+        DOM.status.textContent = `Template "${name}" berhasil disimpan`;
+      }
+
+      function loadTemplate(template) {
+        // Clear current library
+        STATE.svgLibrary = [];
+        STATE.svgIdCounter = 0;
+
+        // Load SVGs
+        template.svgLibrary.forEach(item => {
+          const id = ++STATE.svgIdCounter;
+          const parsed = parseSvgString(item.content, template.settings.colorOverride);
+          STATE.svgLibrary.push({
+            id: id,
+            name: item.name,
+            content: item.content,
+            viewBox: parsed.viewBox,
+            inner: parsed.inner,
+            checked: item.checked,
+            filename: item.filename
+          });
+        });
+
+        // Apply settings
+        const s = template.settings;
+        DOM.cols.value = s.cols;
+        DOM.rows.value = s.rows;
+        DOM.tileW.value = s.tileW;
+        DOM.tileH.value = s.tileH;
+        DOM.repeatMode.value = s.repeatMode;
+        DOM.scale.value = s.scale;
+        DOM.rotation.value = s.rotation;
+        DOM.offsetX.value = s.offsetX;
+        DOM.offsetY.value = s.offsetY;
+        DOM.randomPosition.checked = s.randomPosition;
+        DOM.randomAmount.value = s.randomAmount;
+        DOM.randomRotate.checked = s.randomRotate;
+        DOM.randomRotateAmount.value = s.randomRotateAmount;
+        DOM.randomSeed.value = s.randomSeed;
+        DOM.bgText.value = s.bgColor;
+        DOM.bgColor.value = s.bgColor;
+        DOM.showBoundary.checked = s.showBoundary;
+        DOM.wrapClone.checked = s.wrapClone;
+
+        // Color override
+        if (s.colorOverride) {
+          DOM.enableColorOverride.checked = s.colorOverride.enabled;
+          DOM.overrideFillText.value = s.colorOverride.fillColor;
+          DOM.overrideFillColor.value = s.colorOverride.fillColor;
+          DOM.overrideStrokeText.value = s.colorOverride.strokeColor;
+          DOM.overrideStrokeColor.value = s.colorOverride.strokeColor;
+          DOM.overrideStrokeWidth.value = s.colorOverride.strokeWidth;
+        }
+
+        setAspectRatio(s.aspect || '1x1');
+        renderSidebar();
+        renderPattern();
+        DOM.status.textContent = `Template "${template.name}" dimuat`;
+      }
+
+      function deleteTemplate(id) {
+        if (confirm('Hapus template ini?')) {
+          STATE.templates = STATE.templates.filter(t => t.id !== id);
+          renderTemplates();
+        }
+      }
+
+      function renderTemplates() {
+        const container = DOM.templateList;
+
+        if (STATE.templates.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state-svg" style="padding:15px 10px;">
+              <span class="icon" style="font-size:20px;">📭</span>
+              Belum ada template tersimpan
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        STATE.templates.forEach(template => {
+          // Generate thumbnail from first SVG
+          let thumbSvg = '';
+          if (template.svgLibrary.length > 0) {
+            thumbSvg = template.svgLibrary[0].content.replace(/<\?xml[^>]*\?>/, '').trim();
+          }
+
+          html += `
+            <div class="template-item">
+              <div class="preview">${thumbSvg}</div>
+              <div class="info">
+                <div class="name" title="${template.name}">${template.name}</div>
+                <div class="date">${template.date} · ${template.svgLibrary.length} SVG</div>
+              </div>
+              <div class="actions">
+                <button class="load" title="Load template">📂</button>
+                <button class="delete" title="Hapus template">🗑️</button>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+
+        container.querySelectorAll('.template-item').forEach((el, index) => {
+          const template = STATE.templates[index];
+          const loadBtn = el.querySelector('.load');
+          const deleteBtn = el.querySelector('.delete');
+
+          loadBtn.addEventListener('click', () => loadTemplate(template));
+          deleteBtn.addEventListener('click', () => deleteTemplate(template.id));
+        });
+      }
+
+      // ============================================================
+      // 16. RESET
       // ============================================================
       function resetApp() {
         STATE.svgLibrary = [];
@@ -1725,16 +2214,24 @@ async function createZipStream(files) {
         DOM.wrapClone.checked = true;
         DOM.exportFormat.value = 'svg';
 
+        DOM.enableColorOverride.checked = false;
+        DOM.overrideFillColor.value = '#38bdf8';
+        DOM.overrideFillText.value = '#38bdf8';
+        DOM.overrideStrokeColor.value = '#0f172a';
+        DOM.overrideStrokeText.value = '#0f172a';
+        DOM.overrideStrokeWidth.value = 2;
+
         STATE.tileRatioLocked = false;
         DOM.lockRatioBtn.textContent = '🔓 Unlock Ratio';
 
         DOM.status.textContent = 'Reset selesai';
         renderSidebar();
         setAspectRatio('1x1');
+        renderTemplates();
       }
 
       // ============================================================
-      // 16. DEBOUNCED RENDER
+      // 17. DEBOUNCED RENDER
       // ============================================================
       function debouncedRender() {
         if (STATE.renderTimeout) {
@@ -1747,7 +2244,7 @@ async function createZipStream(files) {
       }
 
       // ============================================================
-      // 17. FILE HANDLING
+      // 18. FILE HANDLING
       // ============================================================
       function readSvgFiles(files) {
         let loadedCount = 0;
@@ -1785,7 +2282,7 @@ async function createZipStream(files) {
       }
 
       // ============================================================
-      // 18. INIT EVENT LISTENERS
+      // 19. INIT EVENT LISTENERS
       // ============================================================
       function initEvents() {
         // Dropzone
@@ -1879,10 +2376,54 @@ async function createZipStream(files) {
           renderPattern();
         });
 
+        // Color Override
+        const colorOverrideEls = [
+          DOM.enableColorOverride,
+          DOM.overrideFillColor,
+          DOM.overrideFillText,
+          DOM.overrideStrokeColor,
+          DOM.overrideStrokeText,
+          DOM.overrideStrokeWidth
+        ];
+
+        colorOverrideEls.forEach(el => {
+          if (el) {
+            el.addEventListener('input', () => {
+              if (el === DOM.overrideFillColor) {
+                DOM.overrideFillText.value = DOM.overrideFillColor.value;
+              }
+              if (el === DOM.overrideFillText && /^#[0-9A-Fa-f]{6}$/.test(DOM.overrideFillText.value)) {
+                DOM.overrideFillColor.value = DOM.overrideFillText.value;
+              }
+              if (el === DOM.overrideStrokeColor) {
+                DOM.overrideStrokeText.value = DOM.overrideStrokeColor.value;
+              }
+              if (el === DOM.overrideStrokeText && /^#[0-9A-Fa-f]{6}$/.test(DOM.overrideStrokeText.value)) {
+                DOM.overrideStrokeColor.value = DOM.overrideStrokeText.value;
+              }
+              reprocessSvgColors();
+            });
+            el.addEventListener('change', reprocessSvgColors);
+          }
+        });
+
+        DOM.resetColorOverrideBtn.addEventListener('click', () => {
+          DOM.overrideFillColor.value = '#38bdf8';
+          DOM.overrideFillText.value = '#38bdf8';
+          DOM.overrideStrokeColor.value = '#0f172a';
+          DOM.overrideStrokeText.value = '#0f172a';
+          DOM.overrideStrokeWidth.value = 2;
+          DOM.enableColorOverride.checked = false;
+          reprocessSvgColors();
+        });
+
         // Sidebar actions
         DOM.selectAllBtn.addEventListener('click', selectAllSvg);
         DOM.deselectAllBtn.addEventListener('click', deselectAllSvg);
         DOM.clearAllBtn.addEventListener('click', clearAllSvg);
+
+        // Template
+        DOM.saveTemplateBtn.addEventListener('click', saveTemplate);
 
         // Toggle sidebar mobile
         DOM.toggleSidebarBtn.addEventListener('click', () => {
@@ -1931,14 +2472,32 @@ async function createZipStream(files) {
       }
 
       // ============================================================
-      // 19. INIT
+      // 20. INIT
       // ============================================================
       function init() {
         initDom();
+        renderPresetColors();
         initEvents();
         setAspectRatio('1x1');
         renderSidebar();
+        renderTemplates();
         renderPattern();
+
+        // Load templates from localStorage
+        const saved = localStorage.getItem('seamless_templates');
+        if (saved) {
+          try {
+            STATE.templates = JSON.parse(saved);
+            renderTemplates();
+          } catch (e) {
+            console.error('Error loading templates:', e);
+          }
+        }
+
+        // Auto-save templates to localStorage
+        setInterval(() => {
+          localStorage.setItem('seamless_templates', JSON.stringify(STATE.templates));
+        }, 5000);
       }
 
       // Start the app

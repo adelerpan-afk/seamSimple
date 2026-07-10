@@ -840,8 +840,7 @@
       </div>
     </div>
   </div>
-<!-- Tambahkan sebelum tag penutup body -->
-<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+
   <script>
     // ================================================================
     // MODULE: app.js - Entry Point
@@ -1667,33 +1666,31 @@ function generatePngData(svgContent) {
   });
 }
 
-// ============================================================
-// 14. ZIP MODULE (fflate) - OK, tidak perlu diubah
-// ============================================================
+// ================================================================
+// 14. ZIP MODULE (menggunakan zip.js)
+// ================================================================
+
 async function createZipStream(files) {
-  return new Promise((resolve, reject) => {
-    const zip = new fflate.Zip((err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(new Blob([data], { type: 'application/zip' }));
-      }
-    });
+  const zip = new zip.ZipWriter();
 
-    for (const file of files) {
-      let data;
-      if (file.isBinary) {
-        data = file.content instanceof Uint8Array 
-          ? file.content 
-          : new Uint8Array(file.content);
-      } else {
-        data = new TextEncoder().encode(file.content);
-      }
-      zip.add(file.name, data);
+  for (const file of files) {
+    let data;
+    if (file.isBinary) {
+      // Pastikan Uint8Array
+      data = file.content instanceof Uint8Array 
+        ? file.content 
+        : new Uint8Array(file.content);
+    } else {
+      data = new TextEncoder().encode(file.content);
     }
+    
+    // zip.js menggunakan Blob
+    const blob = new Blob([data]);
+    await zip.add(file.name, blob);
+  }
 
-    zip.end();
-  });
+  const zipBlob = await zip.close();
+  return zipBlob;
 }
       // ============================================================
       // 15. RESET
@@ -1944,6 +1941,7 @@ async function createZipStream(files) {
 
     })();
   </script>
-
+<!-- Ganti script fflate dengan zip.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zip.js/2.7.52/zip.min.js"></script>
 </body>
 </html>

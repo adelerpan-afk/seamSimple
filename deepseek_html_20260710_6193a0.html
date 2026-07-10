@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vanilla JS Seamless SVG Pattern Generator v1.7.0</title>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --border: #334155;
+      --canvas: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 360px 1fr 280px;
+      height: 100vh;
+    }
+
+    /* ===== LEFT SIDEBAR ===== */
+    aside {
+      background: linear-gradient(180deg, var(--panel), #020617);
+      border-right: 1px solid var(--border);
+      padding: 18px;
+      overflow-y: auto;
+    }
+
+    aside::-webkit-scrollbar {
+      width: 4px;
+    }
+    aside::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    aside::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .app-version {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin-left: 6px;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .section {
+      background: rgba(31, 41, 55, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 12px;
+      color: #f8fafc;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font-family: inherit;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      background: #020617;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 96px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    input[type="color"] {
+      width: 48px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: var(--panel-2);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.12s ease, background 0.12s ease;
+      width: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: #374151;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: #082f49;
+    }
+    .btn.success {
+      background: var(--accent-2);
+      color: #052e16;
+    }
+    .btn.danger {
+      background: var(--danger);
+      color: white;
+    }
+    .btn.warning {
+      background: var(--warning);
+      color: #1e1b0d;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .btn-group .btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    .btn-group .btn.active {
+      background: var(--accent);
+      color: #082f49;
+      border: 1px solid var(--accent);
+    }
+
+    .dropzone {
+      border: 1.5px dashed #64748b;
+      border-radius: 16px;
+      padding: 18px;
+      color: var(--muted);
+      text-align: center;
+      background: rgba(2, 6, 23, 0.5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dropzone:hover {
+      border-color: var(--muted);
+    }
+
+    .dropzone.dragover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .info-text {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .export-info {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .export-info strong {
+      color: var(--accent);
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 10px;
+    }
+
+    /* ===== MAIN ===== */
+    main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      height: 100vh;
+    }
+
+    .topbar {
+      height: 56px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      background: rgba(31, 41, 55, 0.8);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .workspace {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.25) 1px, transparent 0),
+        #020617;
+      background-size: 24px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      min-height: 0;
+    }
+
+    .canvas-shell {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--border);
+      background: var(--canvas);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #previewSvg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: var(--canvas);
+      object-fit: contain;
+    }
+
+    /* ===== RIGHT SIDEBAR ===== */
+    .sidebar-right {
+      background: linear-gradient(180deg, var(--panel), #020617);
+      border-left: 1px solid var(--border);
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-right::-webkit-scrollbar {
+      width: 4px;
+    }
+    .sidebar-right::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .sidebar-right::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .sidebar-right .section-title {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 12px;
+      color: #f8fafc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-right .section-title .badge-count {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .svg-list {
+      flex: 1;
+      overflow-y: auto;
+      margin: 0 -6px;
+      padding: 0 6px;
+    }
+
+    .svg-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .svg-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .svg-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .svg-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      cursor: default;
+    }
+
+    .svg-item:hover {
+      background: rgba(31, 41, 55, 0.8);
+      border-color: var(--border);
+    }
+
+    .svg-item.active {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .svg-item .checkbox-wrap {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .svg-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .svg-item .thumbnail {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      background: white;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .svg-item .thumbnail svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .svg-item .info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .svg-item .info .name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .svg-item .info .size {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .svg-item .remove-btn {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: all 0.15s ease;
+    }
+
+    .svg-item .remove-btn:hover {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .empty-state-svg {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 30px 10px;
+      line-height: 1.6;
+    }
+
+    .empty-state-svg .icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .svg-list-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .svg-list-actions .btn {
+      font-size: 11px;
+      padding: 6px 8px;
+    }
+
+    .toggle-sidebar-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .toggle-sidebar-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1200px) {
+      .app {
+        grid-template-columns: 340px 1fr;
+      }
+
+      .sidebar-right {
+        display: none;
+      }
+
+      .sidebar-right.mobile-open {
+        display: flex;
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 320px;
+        height: 100vh;
+        z-index: 100;
+        border-left: 1px solid var(--border);
+        box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+      }
+
+      .toggle-sidebar-btn {
+        display: flex !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow: auto;
+      }
+
+      .app {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      main {
+        height: auto;
+        min-height: 60vh;
+      }
+
+      .workspace {
+        min-height: 50vh;
+        padding: 12px;
+      }
+
+      .canvas-shell {
+        height: auto;
+        min-height: 400px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+    <!-- ===== LEFT SIDEBAR ===== -->
+    <aside>
+      <h1>
+        Seamless SVG Pattern
+        <span class="app-version">v1.7.0</span>
+      </h1>
+      <p class="subtitle">
+        Generator pattern seamless berbasis Vanilla JS. Preview fit to screen, export 4K.
+      </p>
+
+      <!-- SECTION 1: INPUT -->
+      <div class="section">
+        <div class="section-title">1. Input SVG</div>
+
+        <div id="dropzone" class="dropzone">
+          <strong>Drag & drop SVG</strong><br />
+          atau klik untuk upload (multiple)
+          <input id="fileInput" type="file" accept=".svg,image/svg+xml" multiple hidden />
+        </div>
+
+        <label for="svgCode">Atau paste kode SVG</label>
+        <textarea id="svgCode" placeholder="Paste kode <svg>...</svg> di sini"></textarea>
+
+        <div class="btn-row">
+          <button id="loadCodeBtn" class="btn primary">Load SVG</button>
+          <button id="sampleBtn" class="btn">Contoh</button>
+        </div>
+      </div>
+
+      <!-- SECTION 2: CANVAS & GRID -->
+      <div class="section">
+        <div class="section-title">2. Canvas & Grid</div>
+
+        <label>Rasio Canvas (Export 4K)</label>
+        <div class="btn-group">
+          <button id="ratio1x1" class="btn active">1:1 (3840×3840)</button>
+          <button id="ratio16x9" class="btn">16:9 (3840×2160)</button>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label for="cols">Jumlah Kolom</label>
+            <input id="cols" type="number" min="1" max="20" value="4" />
+          </div>
+          <div>
+            <label for="rows">Jumlah Baris</label>
+            <input id="rows" type="number" min="1" max="20" value="3" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="tileW">Tile Width (px)</label>
+            <input id="tileW" type="number" min="10" max="3840" value="240" />
+          </div>
+          <div>
+            <label for="tileH">Tile Height (px)</label>
+            <input id="tileH" type="number" min="10" max="3840" value="240" />
+          </div>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <button id="autoTileBtn" class="btn" style="flex:1;">Auto Hitung Tile</button>
+          <button id="lockRatioBtn" class="btn" style="flex:1;">🔓 Unlock Ratio</button>
+        </div>
+
+        <div class="info-text" id="canvasInfo">Canvas: 3840 × 3840 px | Tile: 240 × 240 px</div>
+
+        <label for="repeatMode" style="margin-top:12px;">Repeat Mode</label>
+        <select id="repeatMode">
+          <option value="grid">Grid</option>
+          <option value="brick">Brick / Half Horizontal</option>
+          <option value="halfdrop">Half-drop / Half Vertical</option>
+          <option value="brick-halfdrop">Brick + Half-drop</option>
+          <option value="mirror">Mirror</option>
+        </select>
+
+        <label for="scale">
+          Scale Elemen: <span id="scaleVal">100%</span>
+        </label>
+        <input id="scale" type="range" min="10" max="300" value="100" />
+
+        <label for="rotation">
+          Rotation: <span id="rotationVal">0°</span>
+        </label>
+        <input id="rotation" type="range" min="0" max="360" value="0" />
+
+        <div class="row">
+          <div>
+            <label for="offsetX">Offset X</label>
+            <input id="offsetX" type="number" value="0" />
+          </div>
+          <div>
+            <label for="offsetY">Offset Y</label>
+            <input id="offsetY" type="number" value="0" />
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <span>Random position seamless</span>
+          <input id="randomPosition" type="checkbox" />
+        </div>
+
+        <label for="randomAmount">
+          Random Position: <span id="randomAmountVal">0 px</span>
+        </label>
+        <input id="randomAmount" type="range" min="0" max="300" value="0" />
+
+        <div class="toggle-row">
+          <span>Random rotate seamless</span>
+          <input id="randomRotate" type="checkbox" />
+        </div>
+
+        <label for="randomRotateAmount">
+          Random Rotate: <span id="randomRotateAmountVal">0°</span>
+        </label>
+        <input id="randomRotateAmount" type="range" min="0" max="180" value="0" />
+
+        <div class="row">
+          <div>
+            <label for="randomSeed">Random Seed</label>
+            <input id="randomSeed" type="number" value="12345" />
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button id="randomizeSeedBtn" class="btn" type="button">Acak Seed</button>
+          </div>
+        </div>
+
+        <p class="hint">
+          Random memakai seed periodik berdasarkan koordinat tile. Tiap tile memakai clipping.
+        </p>
+      </div>
+
+      <!-- SECTION 3: TAMPILAN -->
+      <div class="section">
+        <div class="section-title">3. Tampilan</div>
+
+        <label>Background</label>
+        <div class="color-row">
+          <input id="bgColor" type="color" value="#ffffff" />
+          <input id="bgText" type="text" value="#ffffff" />
+        </div>
+
+        <div class="toggle-row">
+          <span>Tampilkan batas tile</span>
+          <input id="showBoundary" type="checkbox" checked />
+        </div>
+
+        <div class="toggle-row">
+          <span>Seamless wrap clone</span>
+          <input id="wrapClone" type="checkbox" checked />
+        </div>
+
+        <p class="hint">
+          Wrap clone membuat salinan objek ke kiri-kanan dan atas-bawah.
+        </p>
+      </div>
+
+      <!-- SECTION 4: EXPORT -->
+      <div class="section">
+        <div class="section-title">4. Export</div>
+
+        <label for="exportFormat">Format Export</label>
+        <select id="exportFormat">
+          <option value="svg">SVG saja</option>
+          <option value="png">PNG saja</option>
+          <option value="both">SVG + PNG</option>
+        </select>
+
+        <div class="btn-row">
+          <button id="exportSvgBtn" class="btn success">Export Single</button>
+          <button id="exportBatchBtn" class="btn warning">Export Batch (ZIP)</button>
+        </div>
+
+        <div class="export-info" id="exportInfo">
+          <strong>Export 4K</strong> · Ukuran mengikuti rasio yang dipilih
+        </div>
+
+        <button id="resetBtn" class="btn danger" style="margin-top:10px;">Reset</button>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+      <div class="topbar">
+        <div>
+          <strong>Live Preview</strong>
+          <span style="color:var(--muted); font-size:12px; margin-left:8px;" id="previewSize">Fit to screen</span>
+          <div id="status" class="status">Belum ada SVG dimuat</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button class="toggle-sidebar-btn" id="toggleSidebarBtn" title="Toggle SVG List">📋</button>
+          <div class="badge">Vanilla JS + SVG · v1.7.0</div>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <div class="canvas-shell" id="canvasShell">
+          <svg
+            id="previewSvg"
+            xmlns="http://www.w3.org/2000/svg"
+            width="3840"
+            height="3840"
+            viewBox="0 0 3840 3840"
+            preserveAspectRatio="xMidYMid meet"
+          ></svg>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== RIGHT SIDEBAR ===== -->
+    <div class="sidebar-right" id="sidebarRight">
+      <div class="section-title">
+        <span>SVG Library</span>
+        <span class="badge-count" id="svgCount">0 files</span>
+      </div>
+
+      <div class="svg-list" id="svgList">
+        <div class="empty-state-svg">
+          <span class="icon">📁</span>
+          Belum ada SVG<br />
+          Upload melalui panel kiri
+        </div>
+      </div>
+
+      <div class="svg-list-actions">
+        <button id="selectAllBtn" class="btn" style="font-size:11px;">Select All</button>
+        <button id="deselectAllBtn" class="btn" style="font-size:11px;">Deselect All</button>
+        <button id="clearAllBtn" class="btn danger" style="font-size:11px;">Clear All</button>
+      </div>
+    </div>
+  </div>
+<!-- Tambahkan sebelum tag penutup body -->
+<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+  <script>
+    // ================================================================
+    // MODULE: app.js - Entry Point
+    // ================================================================
+    (function() {
+      'use strict';
+
+      // ============================================================
+      // 1. CONFIG
+      // ============================================================
+      const CONFIG = {
+        EXPORT_SIZES: {
+          '1x1': { width: 3840, height: 3840 },
+          '16x9': { width: 3840, height: 2160 }
+        },
+        DEFAULT_TILE_W: 240,
+        DEFAULT_TILE_H: 240,
+        DEFAULT_COLS: 4,
+        DEFAULT_ROWS: 3,
+        DEFAULT_SEED: 12345,
+        BASE_SIZE: 3840
+      };
+
+      // ============================================================
+      // 2. STATE
+      // ============================================================
+      const STATE = {
+        svgLibrary: [],
+        svgIdCounter: 0,
+        currentAspect: '1x1',
+        tileRatioLocked: false,
+        clipCounter: 0,
+        renderTimeout: null
+      };
+
+      // ============================================================
+      // 3. DOM REFS
+      // ============================================================
+      const DOM = {};
+
+      function initDom() {
+        DOM.dropzone = document.getElementById('dropzone');
+        DOM.fileInput = document.getElementById('fileInput');
+        DOM.svgCode = document.getElementById('svgCode');
+        DOM.loadCodeBtn = document.getElementById('loadCodeBtn');
+        DOM.sampleBtn = document.getElementById('sampleBtn');
+
+        DOM.tileW = document.getElementById('tileW');
+        DOM.tileH = document.getElementById('tileH');
+        DOM.cols = document.getElementById('cols');
+        DOM.rows = document.getElementById('rows');
+        DOM.repeatMode = document.getElementById('repeatMode');
+
+        DOM.scale = document.getElementById('scale');
+        DOM.scaleVal = document.getElementById('scaleVal');
+        DOM.rotation = document.getElementById('rotation');
+        DOM.rotationVal = document.getElementById('rotationVal');
+        DOM.offsetX = document.getElementById('offsetX');
+        DOM.offsetY = document.getElementById('offsetY');
+
+        DOM.randomPosition = document.getElementById('randomPosition');
+        DOM.randomAmount = document.getElementById('randomAmount');
+        DOM.randomAmountVal = document.getElementById('randomAmountVal');
+
+        DOM.randomRotate = document.getElementById('randomRotate');
+        DOM.randomRotateAmount = document.getElementById('randomRotateAmount');
+        DOM.randomRotateAmountVal = document.getElementById('randomRotateAmountVal');
+
+        DOM.randomSeed = document.getElementById('randomSeed');
+        DOM.randomizeSeedBtn = document.getElementById('randomizeSeedBtn');
+
+        DOM.bgColor = document.getElementById('bgColor');
+        DOM.bgText = document.getElementById('bgText');
+        DOM.showBoundary = document.getElementById('showBoundary');
+        DOM.wrapClone = document.getElementById('wrapClone');
+
+        DOM.exportSvgBtn = document.getElementById('exportSvgBtn');
+        DOM.exportBatchBtn = document.getElementById('exportBatchBtn');
+        DOM.exportFormat = document.getElementById('exportFormat');
+        DOM.resetBtn = document.getElementById('resetBtn');
+
+        DOM.previewSvg = document.getElementById('previewSvg');
+        DOM.canvasShell = document.getElementById('canvasShell');
+        DOM.status = document.getElementById('status');
+        DOM.canvasInfo = document.getElementById('canvasInfo');
+        DOM.exportInfo = document.getElementById('exportInfo');
+        DOM.previewSize = document.getElementById('previewSize');
+
+        DOM.ratio1x1 = document.getElementById('ratio1x1');
+        DOM.ratio16x9 = document.getElementById('ratio16x9');
+        DOM.autoTileBtn = document.getElementById('autoTileBtn');
+        DOM.lockRatioBtn = document.getElementById('lockRatioBtn');
+
+        DOM.sidebarRight = document.getElementById('sidebarRight');
+        DOM.svgList = document.getElementById('svgList');
+        DOM.svgCount = document.getElementById('svgCount');
+        DOM.selectAllBtn = document.getElementById('selectAllBtn');
+        DOM.deselectAllBtn = document.getElementById('deselectAllBtn');
+        DOM.clearAllBtn = document.getElementById('clearAllBtn');
+        DOM.toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+      }
+
+      // ============================================================
+      // 4. UTILITY FUNCTIONS
+      // ============================================================
+      function seededRandom(seed) {
+        const x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+      }
+
+      function mod(n, m) {
+        return ((n % m) + m) % m;
+      }
+
+      function createSvgEl(tag, attrs = {}) {
+        const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        Object.entries(attrs).forEach(([key, val]) => {
+          el.setAttribute(key, val);
+        });
+        return el;
+      }
+
+      function clearSvg(svg) {
+        while (svg.firstChild) {
+          svg.removeChild(svg.firstChild);
+        }
+      }
+
+      function getCanvasDimensions() {
+        return CONFIG.EXPORT_SIZES[STATE.currentAspect] || CONFIG.EXPORT_SIZES['1x1'];
+      }
+
+      function getFilename(name, ext) {
+        const base = name.replace(/\.[^.]+$/, '');
+        return `seamPat_${base}.${ext}`;
+      }
+
+      function downloadFile(filename, content, mime) {
+        const blob = new Blob([content], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      // ============================================================
+      // 5. SVG PARSER
+      // ============================================================
+      function parseSvgString(svgText) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgText, 'image/svg+xml');
+        const parserError = doc.querySelector('parsererror');
+        const svg = doc.querySelector('svg');
+
+        if (parserError || !svg) {
+          throw new Error('SVG tidak valid. Pastikan kode memiliki tag <svg>...</svg>.');
+        }
+
+        const viewBox = svg.getAttribute('viewBox');
+        let vb = { x: 0, y: 0, w: 100, h: 100 };
+
+        if (viewBox) {
+          const nums = viewBox.trim().split(/[\s,]+/).map(Number);
+          if (nums.length === 4 && nums.every(n => Number.isFinite(n))) {
+            vb = { x: nums[0], y: nums[1], w: nums[2], h: nums[3] };
+          }
+        } else {
+          const w = parseFloat(svg.getAttribute('width')) || 100;
+          const h = parseFloat(svg.getAttribute('height')) || 100;
+          vb = { x: 0, y: 0, w, h };
+        }
+
+        return {
+          viewBox: vb,
+          inner: svg.innerHTML,
+          content: svgText
+        };
+      }
+
+      // ============================================================
+      // 6. SVG LIBRARY
+      // ============================================================
+      function addSvgToLibrary(svgText, filename = 'untitled.svg') {
+        try {
+          const parsed = parseSvgString(svgText);
+          const id = ++STATE.svgIdCounter;
+
+          const existing = STATE.svgLibrary.find(item => item.content === svgText);
+          if (existing) {
+            existing.checked = true;
+            renderSidebar();
+            renderPattern();
+            return existing;
+          }
+
+          const entry = {
+            id,
+            name: filename,
+            content: svgText,
+            viewBox: parsed.viewBox,
+            inner: parsed.inner,
+            checked: true,
+            filename: filename
+          };
+
+          STATE.svgLibrary.push(entry);
+          renderSidebar();
+          renderPattern();
+          return entry;
+        } catch (err) {
+          console.error('Error adding SVG:', err);
+          alert(`Gagal menambahkan SVG: ${err.message}`);
+          return null;
+        }
+      }
+
+      function removeSvgFromLibrary(id) {
+        STATE.svgLibrary = STATE.svgLibrary.filter(item => item.id !== id);
+        renderSidebar();
+        renderPattern();
+      }
+
+      function toggleSvgCheck(id) {
+        const item = STATE.svgLibrary.find(el => el.id === id);
+        if (item) {
+          item.checked = !item.checked;
+          renderSidebar();
+          renderPattern();
+        }
+      }
+
+      function selectAllSvg() {
+        STATE.svgLibrary.forEach(item => item.checked = true);
+        renderSidebar();
+        renderPattern();
+      }
+
+      function deselectAllSvg() {
+        STATE.svgLibrary.forEach(item => item.checked = false);
+        renderSidebar();
+        renderPattern();
+      }
+
+      function clearAllSvg() {
+        if (STATE.svgLibrary.length === 0) return;
+        if (confirm('Hapus semua SVG dari library?')) {
+          STATE.svgLibrary = [];
+          renderSidebar();
+          renderPattern();
+        }
+      }
+
+      function getCheckedSvgs() {
+        return STATE.svgLibrary.filter(item => item.checked);
+      }
+
+      // ============================================================
+      // 7. GET SETTINGS
+      // ============================================================
+      function getSettings() {
+        const canvas = getCanvasDimensions();
+        const cols = Math.max(1, Number(DOM.cols.value) || 4);
+        const rows = Math.max(1, Number(DOM.rows.value) || 3);
+        let tileW = Math.max(10, Number(DOM.tileW.value) || 10);
+        let tileH = Math.max(10, Number(DOM.tileH.value) || 10);
+
+        tileW = Math.min(tileW, canvas.width);
+        tileH = Math.min(tileH, canvas.height);
+
+        return {
+          canvasWidth: canvas.width,
+          canvasHeight: canvas.height,
+          tileW: tileW,
+          tileH: tileH,
+          cols: cols,
+          rows: rows,
+          mode: DOM.repeatMode.value,
+          scale: (Number(DOM.scale.value) || 100) / 100,
+          rotation: Number(DOM.rotation.value) || 0,
+          offsetX: Number(DOM.offsetX.value) || 0,
+          offsetY: Number(DOM.offsetY.value) || 0,
+          randomPosition: DOM.randomPosition.checked,
+          randomAmount: Number(DOM.randomAmount.value) || 0,
+          randomRotate: DOM.randomRotate.checked,
+          randomRotateAmount: Number(DOM.randomRotateAmount.value) || 0,
+          randomSeed: Number(DOM.randomSeed.value) || 1,
+          bgColor: DOM.bgText.value || DOM.bgColor.value,
+          showBoundary: DOM.showBoundary.checked,
+          wrapClone: DOM.wrapClone.checked
+        };
+      }
+
+      // ============================================================
+      // 8. RENDER PATTERN
+      // ============================================================
+      function getTileIndex(x, y, s) {
+        return {
+          col: mod(Math.round(x / s.tileW), s.cols),
+          row: mod(Math.round(y / s.tileH), s.rows)
+        };
+      }
+
+      function getRandomOffset(x, y, s) {
+        if (!s.randomPosition || s.randomAmount <= 0) {
+          return { x: 0, y: 0 };
+        }
+        const { col, row } = getTileIndex(x, y, s);
+        const seedBase = Number(s.randomSeed || 1) + col * 928371 + row * 364479;
+        return {
+          x: (seededRandom(seedBase) * 2 - 1) * s.randomAmount,
+          y: (seededRandom(seedBase + 53.17) * 2 - 1) * s.randomAmount
+        };
+      }
+
+      function getRandomRotation(x, y, s) {
+        if (!s.randomRotate || s.randomRotateAmount <= 0) return 0;
+        const { col, row } = getTileIndex(x, y, s);
+        const seedBase = Number(s.randomSeed || 1) + col * 721357 + row * 193631 + 91.73;
+        return (seededRandom(seedBase) * 2 - 1) * s.randomRotateAmount;
+      }
+
+      function drawTile(x, y, s, svgs, defs) {
+        const clipId = `tileClip_${STATE.clipCounter++}`;
+
+        const clipPath = createSvgEl('clipPath', { id: clipId });
+        clipPath.appendChild(
+          createSvgEl('rect', {
+            x,
+            y,
+            width: s.tileW,
+            height: s.tileH
+          })
+        );
+        defs.appendChild(clipPath);
+
+        const tileGroup = createSvgEl('g', {
+          'clip-path': `url(#${clipId})`
+        });
+
+        const positions = [{ dx: 0, dy: 0 }];
+        if (s.wrapClone) {
+          positions.push(
+            { dx: -s.tileW, dy: 0 },
+            { dx: s.tileW, dy: 0 },
+            { dx: 0, dy: -s.tileH },
+            { dx: 0, dy: s.tileH },
+            { dx: -s.tileW, dy: -s.tileH },
+            { dx: s.tileW, dy: -s.tileH },
+            { dx: -s.tileW, dy: s.tileH },
+            { dx: s.tileW, dy: s.tileH }
+          );
+        }
+
+        const randomOffset = getRandomOffset(x, y, s);
+        const randomRotation = getRandomRotation(x, y, s);
+
+        // Create symbol for each SVG
+        svgs.forEach((svg, index) => {
+          const symbolId = `svg_${svg.id}_${STATE.clipCounter}`;
+          const symbol = createSvgEl('symbol', {
+            id: symbolId,
+            viewBox: `${svg.viewBox.x} ${svg.viewBox.y} ${svg.viewBox.w} ${svg.viewBox.h}`
+          });
+          symbol.innerHTML = svg.inner;
+          defs.appendChild(symbol);
+
+          positions.forEach(pos => {
+            const group = createSvgEl('g');
+
+            const cx = x + pos.dx + s.tileW / 2 + s.offsetX + randomOffset.x;
+            const cy = y + pos.dy + s.tileH / 2 + s.offsetY + randomOffset.y;
+
+            // Different scale/rotation per SVG layer
+            const layerScale = s.scale;
+            const layerRotation = s.rotation + randomRotation;
+
+            group.setAttribute(
+              'transform',
+              `translate(${cx} ${cy}) rotate(${layerRotation}) scale(${layerScale}) translate(${-s.tileW / 2} ${-s.tileH / 2})`
+            );
+
+            const use = createSvgEl('use', {
+              href: `#${symbolId}`,
+              x: 0,
+              y: 0,
+              width: s.tileW,
+              height: s.tileH,
+              preserveAspectRatio: 'xMidYMid meet'
+            });
+
+            group.appendChild(use);
+            tileGroup.appendChild(group);
+          });
+        });
+
+        return tileGroup;
+      }
+
+      function renderPattern() {
+        const s = getSettings();
+
+        // Update display values
+        DOM.scaleVal.textContent = Math.round(s.scale * 100) + '%';
+        DOM.rotationVal.textContent = s.rotation + '°';
+        DOM.randomAmountVal.textContent = s.randomAmount + ' px';
+        DOM.randomRotateAmountVal.textContent = s.randomRotateAmount + '°';
+
+        DOM.canvasInfo.textContent =
+          `Canvas: ${s.canvasWidth} × ${s.canvasHeight} px | Tile: ${s.tileW} × ${s.tileH} px | Grid: ${s.cols}×${s.rows}`;
+
+        DOM.exportInfo.innerHTML = `
+          <strong>Export 4K</strong> · ${s.canvasWidth}×${s.canvasHeight} px · 
+          Rasio ${STATE.currentAspect === '1x1' ? '1:1' : '16:9'}
+        `;
+
+        DOM.previewSvg.setAttribute('width', s.canvasWidth);
+        DOM.previewSvg.setAttribute('height', s.canvasHeight);
+        DOM.previewSvg.setAttribute('viewBox', `0 0 ${s.canvasWidth} ${s.canvasHeight}`);
+        DOM.previewSvg.style.background = s.bgColor;
+        DOM.previewSvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+        clearSvg(DOM.previewSvg);
+
+        // Background
+        const bg = createSvgEl('rect', {
+          x: 0,
+          y: 0,
+          width: s.canvasWidth,
+          height: s.canvasHeight,
+          fill: s.bgColor
+        });
+        DOM.previewSvg.appendChild(bg);
+
+        const checkedSvgs = getCheckedSvgs();
+
+        if (checkedSvgs.length === 0) {
+          drawEmptyState(s.canvasWidth, s.canvasHeight,
+            STATE.svgLibrary.length === 0 ? 'Belum ada SVG di library' : 'Tidak ada SVG yang aktif');
+          DOM.status.textContent = `${checkedSvgs.length} SVG aktif dari ${STATE.svgLibrary.length} total`;
+          return;
+        }
+
+        const defs = createSvgEl('defs');
+        DOM.previewSvg.appendChild(defs);
+
+        STATE.clipCounter = 0;
+
+        const totalTileW = s.tileW * s.cols;
+        const totalTileH = s.tileH * s.rows;
+        const startX = (s.canvasWidth - totalTileW) / 2;
+        const startY = (s.canvasHeight - totalTileH) / 2;
+
+        for (let row = 0; row < s.rows; row++) {
+          for (let col = 0; col < s.cols; col++) {
+            let x = startX + col * s.tileW;
+            let y = startY + row * s.tileH;
+
+            if ((s.mode === 'brick' || s.mode === 'brick-halfdrop') && row % 2 === 1) {
+              x += s.tileW / 2;
+            }
+            if ((s.mode === 'halfdrop' || s.mode === 'brick-halfdrop') && col % 2 === 1) {
+              y += s.tileH / 2;
+            }
+
+            const tileGroup = drawTile(x, y, s, checkedSvgs, defs);
+            DOM.previewSvg.appendChild(tileGroup);
+
+            // Edge wrapping
+            if ((s.mode === 'brick' || s.mode === 'brick-halfdrop') &&
+              row % 2 === 1 && x + s.tileW > s.canvasWidth) {
+              const wrapGroup = drawTile(x - s.canvasWidth, y, s, checkedSvgs, defs);
+              DOM.previewSvg.appendChild(wrapGroup);
+            }
+
+            if ((s.mode === 'halfdrop' || s.mode === 'brick-halfdrop') &&
+              col % 2 === 1 && y + s.tileH > s.canvasHeight) {
+              const wrapGroup = drawTile(x, y - s.canvasHeight, s, checkedSvgs, defs);
+              DOM.previewSvg.appendChild(wrapGroup);
+            }
+
+            if (s.mode === 'brick-halfdrop' &&
+              row % 2 === 1 && col % 2 === 1 &&
+              x + s.tileW > s.canvasWidth && y + s.tileH > s.canvasHeight) {
+              const wrapGroup = drawTile(x - s.canvasWidth, y - s.canvasHeight, s, checkedSvgs, defs);
+              DOM.previewSvg.appendChild(wrapGroup);
+            }
+          }
+        }
+
+        if (s.showBoundary) {
+          drawBoundaries(s, startX, startY);
+        }
+
+        DOM.status.textContent = `${checkedSvgs.length} SVG aktif dari ${STATE.svgLibrary.length} total`;
+      }
+
+      function drawBoundaries(s, startX, startY) {
+        const boundary = createSvgEl('g', {
+          stroke: 'rgba(239, 68, 68, 0.8)',
+          'stroke-width': 2,
+          fill: 'none',
+          'stroke-dasharray': '8 8',
+          'pointer-events': 'none'
+        });
+
+        const endX = startX + s.tileW * s.cols;
+        const endY = startY + s.tileH * s.rows;
+
+        for (let x = startX; x <= endX; x += s.tileW) {
+          boundary.appendChild(
+            createSvgEl('line', {
+              x1: Math.max(0, x),
+              y1: Math.max(0, startY),
+              x2: Math.min(s.canvasWidth, x),
+              y2: Math.min(s.canvasHeight, endY)
+            })
+          );
+        }
+
+        for (let y = startY; y <= endY; y += s.tileH) {
+          boundary.appendChild(
+            createSvgEl('line', {
+              x1: Math.max(0, startX),
+              y1: Math.max(0, y),
+              x2: Math.min(s.canvasWidth, endX),
+              y2: Math.min(s.canvasHeight, y)
+            })
+          );
+        }
+
+        DOM.previewSvg.appendChild(boundary);
+      }
+
+      function drawEmptyState(width, height, message) {
+        const text = createSvgEl('text', {
+          x: width / 2,
+          y: height / 2,
+          'text-anchor': 'middle',
+          fill: '#64748b',
+          'font-size': Math.min(48, Math.max(20, width / 40)),
+          'font-family': 'Arial, Helvetica, sans-serif',
+          'font-weight': 'bold'
+        });
+        text.textContent = message;
+        DOM.previewSvg.appendChild(text);
+      }
+
+      // ============================================================
+      // 9. RENDER SIDEBAR
+      // ============================================================
+      function renderSidebar() {
+        const container = DOM.svgList;
+        const count = STATE.svgLibrary.length;
+        const checkedCount = STATE.svgLibrary.filter(item => item.checked).length;
+
+        DOM.svgCount.textContent = `${count} file (${checkedCount} aktif)`;
+
+        if (count === 0) {
+          container.innerHTML = `
+            <div class="empty-state-svg">
+              <span class="icon">📁</span>
+              Belum ada SVG<br />
+              Upload melalui panel kiri
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        STATE.svgLibrary.forEach(item => {
+          const isChecked = item.checked ? 'checked' : '';
+          const isActive = item.checked ? 'active' : '';
+          let thumbnailSvg = item.content.replace(/<\?xml[^>]*\?>/, '').trim();
+
+          html += `
+            <div class="svg-item ${isActive}" data-id="${item.id}">
+              <div class="checkbox-wrap">
+                <input type="checkbox" ${isChecked} />
+              </div>
+              <div class="thumbnail">${thumbnailSvg}</div>
+              <div class="info">
+                <div class="name" title="${item.name}">${item.name}</div>
+                <div class="size">${item.viewBox.w}×${item.viewBox.h}</div>
+              </div>
+              <button class="remove-btn" title="Hapus">✕</button>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+
+        container.querySelectorAll('.svg-item').forEach(el => {
+          const id = parseInt(el.dataset.id);
+          const checkbox = el.querySelector('input[type="checkbox"]');
+
+          checkbox.addEventListener('change', (e) => {
+            e.stopPropagation();
+            toggleSvgCheck(id);
+          });
+
+          el.addEventListener('click', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.closest('.remove-btn')) return;
+            toggleSvgCheck(id);
+          });
+
+          const removeBtn = el.querySelector('.remove-btn');
+          removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeSvgFromLibrary(id);
+          });
+        });
+      }
+
+      // ============================================================
+      // 10. AUTO CALCULATE TILE
+      // ============================================================
+      function autoCalculateTileSize() {
+        const canvas = getCanvasDimensions();
+        const cols = Math.max(1, Number(DOM.cols.value) || 4);
+        const rows = Math.max(1, Number(DOM.rows.value) || 3);
+
+        let tileW = Math.floor(canvas.width / cols);
+        let tileH = Math.floor(canvas.height / rows);
+
+        if (STATE.tileRatioLocked) {
+          const canvasRatio = canvas.width / canvas.height;
+          const tileRatio = tileW / tileH;
+          if (tileRatio > canvasRatio) {
+            tileW = Math.floor(tileH * canvasRatio);
+          } else {
+            tileH = Math.floor(tileW / canvasRatio);
+          }
+        }
+
+        DOM.tileW.value = Math.max(10, tileW);
+        DOM.tileH.value = Math.max(10, tileH);
+      }
+
+      // ============================================================
+      // 11. SET ASPECT RATIO
+      // ============================================================
+      function setAspectRatio(ratio) {
+        STATE.currentAspect = ratio;
+        DOM.ratio1x1.classList.toggle('active', ratio === '1x1');
+        DOM.ratio16x9.classList.toggle('active', ratio === '16x9');
+        autoCalculateTileSize();
+        renderPattern();
+      }
+
+      // ============================================================
+      // 12. EXPORT FUNCTIONS
+      // ============================================================
+      function exportSingle() {
+        renderPattern();
+        const format = DOM.exportFormat.value;
+
+        if (format === 'svg' || format === 'both') {
+          const clone = DOM.previewSvg.cloneNode(true);
+          clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+          const svgText = `<?xml version="1.0" encoding="UTF-8"?>\n${clone.outerHTML}`;
+          downloadFile(`seamless-pattern-${STATE.currentAspect}.svg`, svgText, 'image/svg+xml;charset=utf-8');
+        }
+
+        if (format === 'png' || format === 'both') {
+          exportPng('seamless-pattern');
+        }
+      }
+
+      function exportPng(baseName) {
+        const svgData = new XMLSerializer().serializeToString(DOM.previewSvg);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        const img = new Image();
+        const width = Number(DOM.previewSvg.getAttribute('width'));
+        const height = Number(DOM.previewSvg.getAttribute('height'));
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          canvas.toBlob(blob => {
+            const pngUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = pngUrl;
+            a.download = `${baseName}-${STATE.currentAspect}.png`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(pngUrl);
+          }, 'image/png');
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          alert('Gagal export PNG.');
+        };
+
+        img.src = url;
+      }
+// ============================================================
+// 13. EXPORT BATCH WITH ZIP
+// ============================================================
+async function exportBatch() {
+  const checkedSvgs = getCheckedSvgs();
+  if (checkedSvgs.length === 0) {
+    alert('Tidak ada SVG yang dipilih untuk batch export.');
+    return;
+  }
+
+  const format = DOM.exportFormat.value;
+  const files = [];
+
+  DOM.status.textContent = `Memproses ${checkedSvgs.length} SVG...`;
+
+  // Backup state yang benar
+  const originalState = STATE.svgLibrary.map(item => ({
+    id: item.id,
+    checked: item.checked
+  }));
+
+  for (let i = 0; i < checkedSvgs.length; i++) {
+    const svg = checkedSvgs[i];
+    DOM.status.textContent = `Memproses ${i + 1}/${checkedSvgs.length}: ${svg.name}`;
+
+    // Set hanya SVG ini yang aktif
+    STATE.svgLibrary.forEach(item => {
+      item.checked = (item.id === svg.id);
+    });
+
+    renderPattern();
+
+    // Generate SVG
+    const clone = DOM.previewSvg.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    const svgContent = `<?xml version="1.0" encoding="UTF-8"?>\n${clone.outerHTML}`;
+
+    if (format === 'svg' || format === 'both') {
+      files.push({
+        name: getFilename(svg.name, 'svg'),
+        content: svgContent,
+        type: 'svg'
+      });
+    }
+
+    if (format === 'png' || format === 'both') {
+      const pngData = await generatePngData(svgContent);
+      if (pngData) {
+        files.push({
+          name: getFilename(svg.name, 'png'),
+          content: pngData, // ← Uint8Array
+          type: 'png',
+          isBinary: true
+        });
+      }
+    }
+  }
+
+  // Restore state yang benar
+  originalState.forEach(({ id, checked }) => {
+    const item = STATE.svgLibrary.find(el => el.id === id);
+    if (item) item.checked = checked;
+  });
+
+  renderPattern();
+
+  if (files.length === 0) {
+    alert('Tidak ada file yang dihasilkan.');
+    return;
+  }
+
+  DOM.status.textContent = `Membuat ZIP dari ${files.length} file...`;
+
+  try {
+    const zipBlob = await createZipStream(files);
+    downloadFile('seamless-patterns-batch.zip', zipBlob, 'application/zip');
+    DOM.status.textContent = `Batch export selesai: ${files.length} file dalam ZIP`;
+  } catch (err) {
+    console.error('ZIP creation error:', err);
+    alert(`Gagal membuat ZIP: ${err.message}`);
+    DOM.status.textContent = 'Error saat batch export';
+  }
+}
+
+// ============================================================
+// generatePngData - Perbaikan
+// ============================================================
+function generatePngData(svgContent) {
+  return new Promise((resolve) => {
+    const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+
+    const canvas = document.createElement('canvas');
+    const width = Number(DOM.previewSvg.getAttribute('width'));
+    const height = Number(DOM.previewSvg.getAttribute('height'));
+    canvas.width = width;
+    canvas.height = height;
+
+    img.onload = () => {
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(blob => {
+        blob.arrayBuffer().then(buffer => {
+          resolve(new Uint8Array(buffer)); // ← PERBAIKAN
+        }).catch(() => resolve(null));
+      }, 'image/png');
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(null);
+    };
+
+    img.src = url;
+  });
+}
+
+// ============================================================
+// 14. ZIP MODULE (fflate) - OK, tidak perlu diubah
+// ============================================================
+async function createZipStream(files) {
+  return new Promise((resolve, reject) => {
+    const zip = new fflate.Zip((err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(new Blob([data], { type: 'application/zip' }));
+      }
+    });
+
+    for (const file of files) {
+      let data;
+      if (file.isBinary) {
+        data = file.content instanceof Uint8Array 
+          ? file.content 
+          : new Uint8Array(file.content);
+      } else {
+        data = new TextEncoder().encode(file.content);
+      }
+      zip.add(file.name, data);
+    }
+
+    zip.end();
+  });
+}
+      // ============================================================
+      // 15. RESET
+      // ============================================================
+      function resetApp() {
+        STATE.svgLibrary = [];
+        STATE.svgIdCounter = 0;
+
+        DOM.svgCode.value = '';
+        DOM.cols.value = CONFIG.DEFAULT_COLS;
+        DOM.rows.value = CONFIG.DEFAULT_ROWS;
+        DOM.tileW.value = CONFIG.DEFAULT_TILE_W;
+        DOM.tileH.value = CONFIG.DEFAULT_TILE_H;
+        DOM.repeatMode.value = 'grid';
+        DOM.scale.value = 100;
+        DOM.rotation.value = 0;
+        DOM.offsetX.value = 0;
+        DOM.offsetY.value = 0;
+        DOM.randomPosition.checked = false;
+        DOM.randomAmount.value = 0;
+        DOM.randomRotate.checked = false;
+        DOM.randomRotateAmount.value = 0;
+        DOM.randomSeed.value = CONFIG.DEFAULT_SEED;
+        DOM.bgColor.value = '#ffffff';
+        DOM.bgText.value = '#ffffff';
+        DOM.showBoundary.checked = true;
+        DOM.wrapClone.checked = true;
+        DOM.exportFormat.value = 'svg';
+
+        STATE.tileRatioLocked = false;
+        DOM.lockRatioBtn.textContent = '🔓 Unlock Ratio';
+
+        DOM.status.textContent = 'Reset selesai';
+        renderSidebar();
+        setAspectRatio('1x1');
+      }
+
+      // ============================================================
+      // 16. DEBOUNCED RENDER
+      // ============================================================
+      function debouncedRender() {
+        if (STATE.renderTimeout) {
+          cancelAnimationFrame(STATE.renderTimeout);
+        }
+        STATE.renderTimeout = requestAnimationFrame(() => {
+          renderPattern();
+          STATE.renderTimeout = null;
+        });
+      }
+
+      // ============================================================
+      // 17. FILE HANDLING
+      // ============================================================
+      function readSvgFiles(files) {
+        let loadedCount = 0;
+        let errorCount = 0;
+
+        Array.from(files).forEach(file => {
+          if (!file.name.toLowerCase().endsWith('.svg') && file.type !== 'image/svg+xml') {
+            errorCount++;
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const entry = addSvgToLibrary(reader.result, file.name);
+              if (entry) {
+                loadedCount++;
+                DOM.svgCode.value = reader.result;
+              }
+            } catch (err) {
+              errorCount++;
+              console.error(`Error loading ${file.name}:`, err);
+            }
+
+            if (loadedCount + errorCount === files.length) {
+              DOM.status.textContent = `${loadedCount} SVG berhasil dimuat, ${errorCount} gagal`;
+            }
+          };
+          reader.onerror = () => {
+            errorCount++;
+            console.error(`Error reading ${file.name}`);
+          };
+          reader.readAsText(file);
+        });
+      }
+
+      // ============================================================
+      // 18. INIT EVENT LISTENERS
+      // ============================================================
+      function initEvents() {
+        // Dropzone
+        DOM.dropzone.addEventListener('click', () => DOM.fileInput.click());
+
+        DOM.dropzone.addEventListener('dragover', e => {
+          e.preventDefault();
+          DOM.dropzone.classList.add('dragover');
+        });
+
+        DOM.dropzone.addEventListener('dragleave', () => {
+          DOM.dropzone.classList.remove('dragover');
+        });
+
+        DOM.dropzone.addEventListener('drop', e => {
+          e.preventDefault();
+          DOM.dropzone.classList.remove('dragover');
+          const files = e.dataTransfer.files;
+          if (files.length > 0) readSvgFiles(files);
+        });
+
+        DOM.fileInput.addEventListener('change', e => {
+          const files = e.target.files;
+          if (files.length > 0) readSvgFiles(files);
+          e.target.value = '';
+        });
+
+        // Load from textarea
+        DOM.loadCodeBtn.addEventListener('click', () => {
+          const text = DOM.svgCode.value.trim();
+          if (!text) { alert('Masukkan kode SVG terlebih dahulu.'); return; }
+          const entry = addSvgToLibrary(text, 'pasted.svg');
+          if (entry) DOM.status.textContent = 'SVG berhasil ditambahkan ke library';
+        });
+
+        // Sample
+        DOM.sampleBtn.addEventListener('click', () => {
+          const sampleSvg1 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <circle cx="60" cy="60" r="28" fill="#38bdf8"/>
+  <path d="M60 18 C78 36 96 42 106 60 C88 68 78 84 60 102 C42 84 32 68 14 60 C24 42 42 36 60 18Z" fill="#22c55e" opacity="0.9"/>
+  <circle cx="60" cy="60" r="10" fill="#facc15"/>
+  <path d="M10 10 L28 10 L28 28 L10 28Z" fill="#fb7185"/>
+</svg>`;
+
+          const sampleSvg2 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect x="10" y="10" width="100" height="100" rx="20" fill="#8b5cf6" opacity="0.8"/>
+  <circle cx="60" cy="60" r="35" fill="#f472b6" opacity="0.7"/>
+  <path d="M60 20 L70 50 L100 50 L75 70 L85 100 L60 80 L35 100 L45 70 L20 50 L50 50 Z" fill="#fbbf24" opacity="0.9"/>
+</svg>`;
+
+          addSvgToLibrary(sampleSvg1, 'sample-1.svg');
+          addSvgToLibrary(sampleSvg2, 'sample-2.svg');
+          DOM.svgCode.value = sampleSvg1;
+          DOM.status.textContent = 'Sample SVG berhasil ditambahkan';
+        });
+
+        // Export
+        DOM.exportSvgBtn.addEventListener('click', exportSingle);
+        DOM.exportBatchBtn.addEventListener('click', exportBatch);
+
+        // Reset
+        DOM.resetBtn.addEventListener('click', resetApp);
+
+        // Aspect Ratio
+        DOM.ratio1x1.addEventListener('click', () => setAspectRatio('1x1'));
+        DOM.ratio16x9.addEventListener('click', () => setAspectRatio('16x9'));
+
+        // Auto Tile
+        DOM.autoTileBtn.addEventListener('click', () => {
+          autoCalculateTileSize();
+          renderPattern();
+        });
+
+        // Lock Ratio
+        DOM.lockRatioBtn.addEventListener('click', () => {
+          STATE.tileRatioLocked = !STATE.tileRatioLocked;
+          DOM.lockRatioBtn.textContent = STATE.tileRatioLocked ? '🔒 Lock Ratio' : '🔓 Unlock Ratio';
+          if (STATE.tileRatioLocked) {
+            autoCalculateTileSize();
+            renderPattern();
+          }
+        });
+
+        // Randomize Seed
+        DOM.randomizeSeedBtn.addEventListener('click', () => {
+          DOM.randomSeed.value = Math.floor(Math.random() * 999999);
+          DOM.randomPosition.checked = true;
+          DOM.randomRotate.checked = true;
+          if (Number(DOM.randomAmount.value) === 0) DOM.randomAmount.value = 80;
+          if (Number(DOM.randomRotateAmount.value) === 0) DOM.randomRotateAmount.value = 45;
+          renderPattern();
+        });
+
+        // Sidebar actions
+        DOM.selectAllBtn.addEventListener('click', selectAllSvg);
+        DOM.deselectAllBtn.addEventListener('click', deselectAllSvg);
+        DOM.clearAllBtn.addEventListener('click', clearAllSvg);
+
+        // Toggle sidebar mobile
+        DOM.toggleSidebarBtn.addEventListener('click', () => {
+          DOM.sidebarRight.classList.toggle('mobile-open');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (window.innerWidth <= 1200) {
+            const sidebar = DOM.sidebarRight;
+            const toggleBtn = DOM.toggleSidebarBtn;
+            if (sidebar.classList.contains('mobile-open') &&
+              !sidebar.contains(e.target) &&
+              !toggleBtn.contains(e.target)) {
+              sidebar.classList.remove('mobile-open');
+            }
+          }
+        });
+
+        // Auto-render inputs
+        const autoRenderEls = [
+          DOM.cols, DOM.rows, DOM.repeatMode, DOM.scale, DOM.rotation,
+          DOM.offsetX, DOM.offsetY, DOM.randomPosition, DOM.randomAmount,
+          DOM.randomRotate, DOM.randomRotateAmount, DOM.randomSeed,
+          DOM.showBoundary, DOM.wrapClone, DOM.tileW, DOM.tileH
+        ];
+
+        autoRenderEls.forEach(el => {
+          if (el) {
+            el.addEventListener('input', debouncedRender);
+            el.addEventListener('change', debouncedRender);
+          }
+        });
+
+        // Colors
+        DOM.bgColor.addEventListener('input', () => {
+          DOM.bgText.value = DOM.bgColor.value;
+          debouncedRender();
+        });
+
+        DOM.bgText.addEventListener('input', () => {
+          if (/^#[0-9A-Fa-f]{6}$/.test(DOM.bgText.value)) {
+            DOM.bgColor.value = DOM.bgText.value;
+            debouncedRender();
+          }
+        });
+      }
+
+      // ============================================================
+      // 19. INIT
+      // ============================================================
+      function init() {
+        initDom();
+        initEvents();
+        setAspectRatio('1x1');
+        renderSidebar();
+        renderPattern();
+      }
+
+      // Start the app
+      init();
+
+    })();
+  </script>
+
+</body>
+</html>

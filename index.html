@@ -1671,7 +1671,8 @@ function generatePngData(svgContent) {
 // ================================================================
 
 async function createZipStream(files) {
-  const zip = new zip.ZipWriter();
+  // Inisialisasi ZipWriter terlebih dahulu
+  const zipWriter = new zip.ZipWriter();
 
   for (const file of files) {
     let data;
@@ -1684,12 +1685,14 @@ async function createZipStream(files) {
       data = new TextEncoder().encode(file.content);
     }
     
-    // zip.js menggunakan Blob
+    // Konversi ke Blob
     const blob = new Blob([data]);
-    await zip.add(file.name, blob);
+    // Tambahkan ke zip
+    await zipWriter.add(file.name, blob);
   }
 
-  const zipBlob = await zip.close();
+  // Tutup zip dan dapatkan Blob
+  const zipBlob = await zipWriter.close();
   return zipBlob;
 }
       // ============================================================
